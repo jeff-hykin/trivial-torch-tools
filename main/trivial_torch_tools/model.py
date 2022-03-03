@@ -1,0 +1,182 @@
+import numpy
+import torch
+import torch.nn as nn
+from .generics import product, bundle, large_pickle_save, large_pickle_load
+from simple_namespace import namespace
+
+
+@namespace
+def init():
+    def device(device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), attribute="hardware", constructor_arg=True):
+        def wrapper1(function_being_wrapped):
+            # wrapper2 will be the new __init__()
+            def wrapper2(self, *args, **kwargs):
+                current_device = device
+                
+                if not (attribute is None):
+                    setattr(self, attribute, current_device)
+                    if constructor_arg and (attribute in kwargs) and not (kwargs[attribute] is None):
+                        current_device = kwargs[attribute]
+                
+                # call the normal __init__()
+                init_output = function_being_wrapped(self, *args, **kwargs)
+                
+                # send this to the device if possible
+                if hasattr(self, "to") and callable(self.to):
+                    self.to(current_device)
+                
+                return init_output
+            return wrapper2
+        return wrapper1
+    
+                
+    def forward_sequential_method(function_being_wrapped):
+        # wrapper will be the new __init__()
+        def wrapper(self, *args, **kwargs):
+            
+            # create method (note: no self argument)
+            def forward(neuron_activations):
+                return functools.reduce(
+                    (lambda x, each_layer: each_layer.forward(x)),
+                    self.children(),
+                    neuron_activations
+                )
+            # attach method
+            self.forward = forward
+            
+            # call original __init__()
+            return function_being_wrapped(self, *args, **kwargs)
+        return wrapper
+    
+    def save_and_load_methods(basic_attributes, model_attributes, path_attribute="path"):
+        def wrapper1(function_being_wrapped):
+            # wrapper2 will be the new __init__()
+            def wrapper2(self, *args, **kwargs):
+                # create methods
+                def save(path=None):
+                    model_data = tuple(getattr(self, each_attribute).state_dict() for each_attribute in model_attributes)
+                    normal_data = tuple(getattr(self, each_attribute)               for each_attribute in basic_attributes)
+                    if hasattr(self, path_attribute):
+                        value = getattr(self, path_attribute)
+                        if isinstance(value, str):
+                            path = path or value
+                    return large_pickle_save((normal_data, model_data), path)
+                
+                def load(path=None):
+                    if hasattr(self, path_attribute):
+                        value = getattr(self, path_attribute)
+                        if isinstance(value, str):
+                            path = path or value
+                    (normal_data, model_data) = large_pickle_load(path or self.path)
+                    for each_attribute, each_value in zip(basic_attributes, normal_data):
+                        setattr(self, each_attribute, each_value)
+                    for each_attribute, each_value in zip(model_attributes, model_data):
+                        getattr(self, each_attribute).load_state_dict(each_value)
+                    return self
+                
+                # attach methods
+                self.save = save
+                self.load = load
+                # call original __init__()
+                return function_being_wrapped(self, *args, **kwargs)
+            return wrapper2
+        return wrapper1
+    
+    return locals()
+
+
+def apply_to_selected(func, which_args, args, kwargs):
+    if which_args == ...:
+        new_args = tuple(func(each) for each in args)
+        new_kwargs = { key : func(value) for each_key, each_value in kwargs.items() }
+        return new_args, new_kwargs
+    else:
+        # todo: probably make this more flexible
+        which_args = tuple(which_args)
+        
+        new_args = []
+        for index, each in enumerate(args):
+            if index in which_args:
+                new_args[index].append(func(each))
+            else:
+                new_args[index].append(each)
+            
+        new_kwargs = {}
+        for key, value in kwargs.items():
+            if key in which_args:
+                new_kwargs[key].append(func(value))
+            else:
+                new_kwargs[key].append(value)
+        
+        return new_args, new_kwargs
+
+@namespace
+def convert_args():
+    def to_tensor(which_args=...):
+        from .core import to_tensor as real_to_tensor
+        def wrapper1(function_being_wrapped):
+            # wrapper2 will be the replacement 
+            def wrapper2(self, *args, **kwargs):
+                # run the converter on the selected arguments
+                args, kwargs = apply_to_selected(real_to_tensor, which_args, args, kwargs)
+                return function_being_wrapped(self, *args, **kwargs)
+            return wrapper2
+        return wrapper1
+    
+    def to_device(device_attribute="hardware", which_args=...):
+        def wrapper1(function_being_wrapped):
+            # wrapper2 will be the replacement 
+            def wrapper2(self, *args, **kwargs):
+                def converter(value):
+                    if hasattr(self, device_attribute):
+                        device = getattr(self, device_attribute)
+                        if device:
+                            if hasattr(value, "to") and callable(getattr(value, "to")):
+                                return value.to(device)
+                    return value
+                # run the converter on the selected arguments
+                args, kwargs = apply_to_selected(converter, which_args, args, kwargs)
+                return function_being_wrapped(self, *args, **kwargs)
+            return wrapper2
+        return wrapper1
+    
+    def to_batched_tensor(number_of_dimensions=4, which_args=...):
+        """
+            will wrap single-datapoint argument to make them appear as a batch
+        """
+        from .core import to_tensor as real_to_tensor
+        def wrapper1(function_being_wrapped):
+            # wrapper2 will be the replacement 
+            def wrapper2(self, *args, **kwargs):
+                def converter(input_data):
+                    # converts to torch if needed
+                    input_data = real_to_tensor(input_data).type(torch.float)
+                    existing_dimensions = input_data.shape[-number_of_dimensions:]
+                    number_missing = number_of_dimensions - len(existing_dimensions)
+                    missing_dimensions = number_missing * [1]
+                    dimensions = [*missing_dimensions, *existing_dimensions]
+                    dimensions[0] = -1
+                    # reshape to fit in the dimensions (either add dimensions, or crush dimensions)
+                    input_data = input_data.reshape(dimensions)
+                    return input_data
+                # run the converter on the selected arguments
+                args, kwargs = apply_to_selected(converter, which_args, args, kwargs)
+                return function_being_wrapped(self, *args, **kwargs)
+            return wrapper2
+        return wrapper1
+    
+    def torch_tensor_from_opencv_format(number_of_dimensions=4):
+        """
+            
+        """
+        from .image import torch_tensor_from_opencv_format as real_torch_tensor_from_opencv_format
+        def wrapper1(function_being_wrapped):
+            # wrapper2 will be the replacement 
+            def wrapper2(self, *args, **kwargs):
+                # run the converter on the selected arguments
+                args, kwargs = apply_to_selected(real_torch_tensor_from_opencv_format, which_args, args, kwargs)
+                return function_being_wrapped(self, *args, **kwargs)
+            return wrapper2
+        return wrapper1
+    
+    return locals()
