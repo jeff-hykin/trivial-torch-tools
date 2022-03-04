@@ -114,7 +114,7 @@ def apply_to_selected(func, which_args, args, kwargs):
         return new_args, new_kwargs
 
 @namespace
-def convert_args():
+def convert_each_arg():
     def to_tensor(which_args=...):
         from trivial_torch_tools.core import to_tensor as real_to_tensor
         def wrapper1(function_being_wrapped):
