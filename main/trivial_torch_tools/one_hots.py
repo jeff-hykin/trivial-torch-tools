@@ -11,6 +11,7 @@ class OneHotifier():
     
     def to_one_hot(self, value):
         index = self.possible_values.index(value)
+        # TODO: better error message if value not found 
         return torch.nn.functional.one_hot(
             torch.tensor(index),
             len(self.possible_values)
@@ -43,7 +44,7 @@ class OneHotifier():
         return output.to(device) if device else output
         
     @classmethod
-    def index_from_one_hot(tensor):
+    def index_from_one_hot(cls, tensor):
         # make sure its a tensor
         tensor = to_tensor(tensor)
         return tensor.max(0, keepdim=True).indices.squeeze().item()

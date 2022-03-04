@@ -27,7 +27,8 @@ setuptools.setup(
     packages=[package_info["name"]],
     install_requires=[
         # examples:
-        'torch >= 1.7.0',
+        'torchvision >= 0.9.0',
+        'simple-namespace >= 1.0.0',
         # 'python-socketio >= 5.3.0',
         # 'requests == 2.26.0',
     ],

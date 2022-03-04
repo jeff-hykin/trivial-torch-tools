@@ -6,7 +6,7 @@ from simple_namespace import namespace
 
 @namespace
 def init():
-    def device(device=None, attribute="hardware", constructor_arg=True):
+    def to_device(device=None, attribute="hardware", constructor_arg=True):
         if device is None:
             from trivial_torch_tools.core import default_device
             device = default_device
