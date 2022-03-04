@@ -42,7 +42,7 @@ core.to_tensor(nested_lists_of_arrays_tuples_and_more) # aggresively converts ob
 @model.init.save_and_load_methods(basic_attributes=[], model_attributes=[], path_attribute="path")
 @model.init.forward_sequential_method
 # decorators for def forward(): # or whatever 
-@model.convert_args.to_tensor()
+@model.convert_args.to_tensor() # converts all args by default. Use .to_tensor(which_args=[0]) to only convert first
 @model.convert_args.to_device()
 @model.convert_args.to_batched_tensor(number_of_dimensions=4) # 4 for color images
 @model.convert_args.torch_tensor_from_opencv_format()
