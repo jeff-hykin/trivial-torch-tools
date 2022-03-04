@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "trivial_torch_tools"
-version = "0.0.2"
+version = "0.1.0"
 description = "Decorators for reducing pytorch boilerplate"
 authors=[]
 
