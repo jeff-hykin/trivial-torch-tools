@@ -16,9 +16,9 @@ class Model(nn.Module):
     # ^ does self.to() and defaults to GPU if available (uses default_device variable)
     @init.save_and_load_methods(model_attributes=["layers"], basic_attributes=["input_shape"])
     # ^ creates self.save(path=self.path) and self.load(path=self.path)
-    def __init__(self, input_shape=(81,81,3)):
-        self.input_shape = input_shape
-        layers = Sequential(input_shape=(81,81,3))
+    def __init__(self):
+        self.input_shape = (81,81,3)
+        layers = Sequential(input_shape=self.input_shape)
         # ^ dynamically compute the output shape/size of layers (the nn.Linear below)
         layers.add_module('conv1'   , nn.Conv2d(input_shape[0], 32, kernel_size=8, stride=4, padding=0))
         layers.add_module('relu1'   , nn.ReLU())
@@ -35,21 +35,23 @@ class Model(nn.Module):
 from trivial_torch_tools import *
 
 core.default_device # defaults to cuda if available
-core.to_tensor # aggresively converts objects to tensors
+core.to_tensor(nested_lists_of_arrays_tuples_and_more) # aggresively converts objects to tensors
 
-model.init.to_device(device=default_device)
-model.init.save_and_load_methods(basic_attributes=[], model_attributes=[], path_attribute="path")
-model.init.forward_sequential_method
-model.convert_args.to_tensor()
-model.convert_args.to_device()
-model.convert_args.to_batched_tensor(number_of_dimensions=4) # for color images
-model.convert_args.torch_tensor_from_opencv_format()
+# decorators for def __init__()
+@model.init.to_device(device=default_device)
+@model.init.save_and_load_methods(basic_attributes=[], model_attributes=[], path_attribute="path")
+@model.init.forward_sequential_method
+# decorators for def forward(): # or whatever 
+@model.convert_args.to_tensor()
+@model.convert_args.to_device()
+@model.convert_args.to_batched_tensor(number_of_dimensions=4) # for color images
+@model.convert_args.torch_tensor_from_opencv_format()
 
-image.tensor_from_path(value)
-image.pil_image_from_tensor(value)
-image.torch_tensor_from_opencv_format(value)
-image.opencv_tensor_from_torch_format(value)
-image.opencv_array_from_pil_image(value)
+image.tensor_from_path(path)
+image.pil_image_from_tensor(tensor)
+image.torch_tensor_from_opencv_format(tensor_or_array)
+image.opencv_tensor_from_torch_format(tensor)
+image.opencv_array_from_pil_image(image_obj)
 
 OneHotifier.tensor_from_argmax(tensor)             # [0.1,99,0,0,] => [0,1,0,0,]
 OneHotifier.index_from_one_hot(tensor)             # [0,1,0,0,] => 2
