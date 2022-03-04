@@ -1,20 +1,18 @@
-import numpy
-import torch
-import torch.nn as nn
-from .generics import product, bundle, large_pickle_save, large_pickle_load
-from .core import device, to_tensor
-from .misc import layer_output_shapes
-from .model import init, convert_args
-from .one_hots import OneHotifier
-
 import functools
+
+import torch.nn as nn
+from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load
+from trivial_torch_tools.core import default_device, to_tensor
+from trivial_torch_tools.misc import layer_output_shapes
+from trivial_torch_tools.model import init, convert_args
+from trivial_torch_tools.one_hots import OneHotifier
+import .image
+
 class Sequential(nn.Sequential):
+    @init.forward_sequential_method
     def __init__(self, *args, **kwargs):
         super(Sequential, self).__init__(*args)
         self.input_shape = kwargs.get("input_shape", None)
-    
-    def forward(self, neuron_activations):
-        return functools.reduce((lambda x, each_layer: each_layer.forward(x)), self.children(), neuron_activations)
     
     @property
     def layer_shapes(self):

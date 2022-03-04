@@ -1,5 +1,5 @@
 def batch_input_and_output(inputs, outputs, batch_size):
-    from .generics import bundle
+    from trivial_torch_tools.generics import bundle
     batches = zip(bundle(inputs, batch_size), bundle(outputs, batch_size))
     for each_input_batch, each_output_batch in batches:
         yield to_tensor(each_input_batch), to_tensor(each_output_batch)

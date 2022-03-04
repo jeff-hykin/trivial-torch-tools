@@ -27,7 +27,7 @@ setuptools.setup(
     packages=[package_info["name"]],
     install_requires=[
         # examples:
-        # 'aiohttp >= 3.7.4',
+        'torch >= 1.7.0',
         # 'python-socketio >= 5.3.0',
         # 'requests == 2.26.0',
     ],

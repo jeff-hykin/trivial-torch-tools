@@ -1,13 +1,19 @@
+from collections import OrderedDict
+
 import torch
 import torch.nn as nn
-from tools.basics import is_like_generator
-from collections import OrderedDict
+from trivial_torch_tools.generics import is_like_generator
 
 default_seed = 1
 torch.manual_seed(default_seed)
 
 # if gpu is to be used
-device = default_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+default_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+try:
+    import numpy
+except Exception as error:
+    pass
 
 def to_tensor(an_object):
     # if already a tensor, just return

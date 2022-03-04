@@ -44,4 +44,5 @@ def opencv_tensor_from_torch_format(array):
     return tensor.permute(*new_shape)
 
 def opencv_array_from_pil_image(image):
+    import numpy
     return numpy.array(image.convert('RGB') ) 

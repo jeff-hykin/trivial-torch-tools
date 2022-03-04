@@ -1,13 +1,16 @@
-import numpy
 import torch
 import torch.nn as nn
-from .generics import product, bundle, large_pickle_save, large_pickle_load
+from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load
 from simple_namespace import namespace
 
 
 @namespace
 def init():
-    def device(device=torch.device("cuda" if torch.cuda.is_available() else "cpu"), attribute="hardware", constructor_arg=True):
+    def device(device=None, attribute="hardware", constructor_arg=True):
+        if device is None:
+            from trivial_torch_tools.core import default_device
+            device = default_device
+        
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the new __init__()
             def wrapper2(self, *args, **kwargs):
@@ -113,7 +116,7 @@ def apply_to_selected(func, which_args, args, kwargs):
 @namespace
 def convert_args():
     def to_tensor(which_args=...):
-        from .core import to_tensor as real_to_tensor
+        from trivial_torch_tools.core import to_tensor as real_to_tensor
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
             def wrapper2(self, *args, **kwargs):
@@ -144,7 +147,7 @@ def convert_args():
         """
             will wrap single-datapoint argument to make them appear as a batch
         """
-        from .core import to_tensor as real_to_tensor
+        from trivial_torch_tools.core import to_tensor as real_to_tensor
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
             def wrapper2(self, *args, **kwargs):
@@ -169,7 +172,7 @@ def convert_args():
         """
             
         """
-        from .image import torch_tensor_from_opencv_format as real_torch_tensor_from_opencv_format
+        from trivial_torch_tools.image import torch_tensor_from_opencv_format as real_torch_tensor_from_opencv_format
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
             def wrapper2(self, *args, **kwargs):
