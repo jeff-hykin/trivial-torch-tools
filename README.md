@@ -10,7 +10,6 @@ Functions and decorators I found myself rewriting for every pytorch project
 from trivial_torch_tools import Sequential, init
 import torch.nn as nn
 
-
 class Model(nn.Module):
     @init.to_device()
     # ^ does self.to() and defaults to GPU if available (uses default_device variable)
