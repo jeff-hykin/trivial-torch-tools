@@ -126,15 +126,17 @@ def convert_each_arg():
             return wrapper2
         return wrapper1
     
-    def to_device(device_attribute="hardware", which_args=...):
+    def to_device(device_attribute="hardware", device=None, which_args=...):
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
             def wrapper2(self, *args, **kwargs):
                 def converter(value):
-                    if hasattr(self, device_attribute):
-                        device = getattr(self, device_attribute)
+                    if hasattr(value, "to") and callable(getattr(value, "to")):
                         if device:
-                            if hasattr(value, "to") and callable(getattr(value, "to")):
+                            return value.to(device)
+                        elif hasattr(self, device_attribute):
+                            device = getattr(self, device_attribute)
+                            if device:
                                 return value.to(device)
                     return value
                 # run the converter on the selected arguments
