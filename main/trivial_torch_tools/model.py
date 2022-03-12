@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load
+from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load, apply_to_selected
 from simple_namespace import namespace
 
 
@@ -87,31 +87,6 @@ def init():
     
     return locals()
 
-
-def apply_to_selected(func, which_args, args, kwargs):
-    if which_args == ...:
-        new_args = tuple(func(each) for each in args)
-        new_kwargs = { each_key : func(each_value) for each_key, each_value in kwargs.items() }
-        return new_args, new_kwargs
-    else:
-        # todo: probably make this more flexible
-        which_args = tuple(which_args)
-        
-        new_args = []
-        for index, each in enumerate(args):
-            if index in which_args:
-                new_args[index].append(func(each))
-            else:
-                new_args[index].append(each)
-            
-        new_kwargs = {}
-        for key, value in kwargs.items():
-            if key in which_args:
-                new_kwargs[key].append(func(value))
-            else:
-                new_kwargs[key].append(value)
-        
-        return new_args, new_kwargs
 
 @namespace
 def convert_each_arg():

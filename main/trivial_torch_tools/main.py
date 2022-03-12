@@ -2,7 +2,7 @@ import functools
 
 import torch.nn as nn
 from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load
-from trivial_torch_tools.core import default_device, to_tensor
+from trivial_torch_tools.core import default_device, to_tensor, args
 from trivial_torch_tools.misc import layer_output_shapes
 from trivial_torch_tools.model import init, convert_each_arg
 from trivial_torch_tools.one_hots import OneHotifier
