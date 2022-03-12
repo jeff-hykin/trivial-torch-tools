@@ -110,9 +110,9 @@ def convert_each_arg():
                         if device:
                             return value.to(device)
                         elif hasattr(self, device_attribute):
-                            device = getattr(self, device_attribute)
-                            if device:
-                                return value.to(device)
+                            self_device = getattr(self, device_attribute)
+                            if self_device:
+                                return value.to(self_device)
                     return value
                 # run the converter on the selected arguments
                 args, kwargs = apply_to_selected(converter, which_args, args, kwargs)
