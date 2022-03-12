@@ -91,7 +91,7 @@ def init():
 def apply_to_selected(func, which_args, args, kwargs):
     if which_args == ...:
         new_args = tuple(func(each) for each in args)
-        new_kwargs = { key : func(value) for each_key, each_value in kwargs.items() }
+        new_kwargs = { each_key : func(each_value) for each_key, each_value in kwargs.items() }
         return new_args, new_kwargs
     else:
         # todo: probably make this more flexible
