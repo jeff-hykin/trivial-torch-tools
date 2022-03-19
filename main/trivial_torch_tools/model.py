@@ -85,6 +85,42 @@ def init():
             return wrapper2
         return wrapper1
     
+    def add_frozen_methods():
+        def wrapper1(function_being_wrapped):
+            # wrapper2 will be the new __init__()
+            def wrapper2(self, *args, **kwargs):
+                # create methods
+                def freeze():
+                    for child in self.children():
+                        for param in child.parameters():
+                            param.requires_grad = False
+                
+                def unfreeze():
+                    for child in self.children():
+                        for param in child.parameters():
+                            param.requires_grad = True
+                
+                class WithObj(object):
+                    def __init__(*args, **kwargs):
+                        pass
+                    def __enter__(_):
+                        self.freeze()
+                        return self
+                    def __exit__(_, __, error, traceback):
+                        self.unfreeze()
+                        # normal cleanup HERE
+                        if error is not None:
+                            # error cleanup HERE
+                            raise error
+                # attach methods
+                self.freeze = freeze
+                self.unfreeze = unfreeze
+                self.frozen = WithObj()
+                
+                return function_being_wrapped(self, *args, **kwargs)
+            return wrapper2
+        return wrapper1
+    
     return locals()
 
 
