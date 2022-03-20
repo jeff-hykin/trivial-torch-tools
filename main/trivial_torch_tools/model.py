@@ -85,7 +85,7 @@ def init():
             return wrapper2
         return wrapper1
     
-    def add_frozen_methods():
+    def freeze_tools():
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the new __init__()
             def wrapper2(self, *args, **kwargs):
