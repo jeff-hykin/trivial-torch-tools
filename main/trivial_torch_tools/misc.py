@@ -1,4 +1,6 @@
 from collections import OrderedDict
+import torch
+import torch.nn as nn
 
 def batch_input_and_output(inputs, outputs, batch_size):
     from trivial_torch_tools.generics import bundle
