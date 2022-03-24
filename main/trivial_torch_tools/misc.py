@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 def batch_input_and_output(inputs, outputs, batch_size):
     from trivial_torch_tools.generics import bundle
     batches = zip(bundle(inputs, batch_size), bundle(outputs, batch_size))
