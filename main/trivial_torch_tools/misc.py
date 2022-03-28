@@ -1,3 +1,7 @@
+from collections import OrderedDict
+import torch
+import torch.nn as nn
+
 def batch_input_and_output(inputs, outputs, batch_size):
     from trivial_torch_tools.generics import bundle
     batches = zip(bundle(inputs, batch_size), bundle(outputs, batch_size))
@@ -11,6 +15,7 @@ def unnormalize(mean, std, image):
 
 # returns list of tensor sizes
 def layer_output_shapes(network, input_shape, device=None):
+    from trivial_torch_tools.core import default_device
     # convert OrderedDict's to just lists
     if isinstance(network, OrderedDict):
         network = list(network.values())

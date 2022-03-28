@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load, apply_to_selected
 from simple_namespace import namespace
+import functools
 
 
 @namespace
@@ -39,6 +40,7 @@ def init():
             
             # create method (note: no self argument)
             def forward(neuron_activations):
+                
                 return functools.reduce(
                     (lambda x, each_layer: each_layer.forward(x)),
                     self.children(),
