@@ -66,9 +66,6 @@ def bundle(iterable, bundle_size):
 
 
 def recursively_map(an_object, function, is_key=False):
-    from tools.basics import is_iterable
-    
-    
     # base case 1 (iterable but treated like a primitive)
     if isinstance(an_object, str):
         return_value = an_object
@@ -92,8 +89,6 @@ def recursively_map(an_object, function, is_key=False):
     return function(return_value, is_key=is_key)
 
 def to_pure(an_object, recursion_help=None):
-    from tools.basics import is_iterable
-    
     # 
     # infinte recursion prevention
     # 
