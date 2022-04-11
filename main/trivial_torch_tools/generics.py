@@ -193,9 +193,11 @@ def large_pickle_save(variable, file_path):
     so that they can be loaded in later
     ~4Gb max value
     """
+    import file_system_py as FS
     import pickle
     bytes_out = pickle.dumps(variable, protocol=4)
     max_bytes = 2**31 - 1
+    FS.clear_a_path_for(file_path, overwrite=True)
     with open(file_path, 'wb') as f_out:
         for idx in range(0, len(bytes_out), max_bytes):
             f_out.write(bytes_out[idx:idx+max_bytes])

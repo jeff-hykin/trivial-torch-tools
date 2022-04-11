@@ -26,11 +26,9 @@ setuptools.setup(
     license=package_info["license"],
     packages=[package_info["name"]],
     install_requires=[
-        # examples:
         'torchvision >= 0.9.0',
         'simple-namespace >= 1.0.0',
-        # 'python-socketio >= 5.3.0',
-        # 'requests == 2.26.0',
+        'file-system-py >= 0.0.6',
     ],
     classifiers=[
         # examples:

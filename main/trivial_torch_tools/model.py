@@ -1,8 +1,10 @@
+import functools
+
 import torch
 import torch.nn as nn
-from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load, apply_to_selected
 from simple_namespace import namespace
-import functools
+
+from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load, apply_to_selected
 
 
 @namespace
@@ -81,7 +83,7 @@ def init():
                 
                 # attach methods
                 self.save = save
-                self.load = load
+                self.__class__.load = load
                 # call original __init__()
                 return function_being_wrapped(self, *args, **kwargs)
             return wrapper2
