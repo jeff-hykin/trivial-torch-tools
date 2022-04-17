@@ -55,7 +55,7 @@ def init():
             return function_being_wrapped(self, *args, **kwargs)
         return wrapper
     
-    def save_and_load_methods(basic_attributes, model_attributes, path_attribute="path"):
+    def save_and_load_methods(basic_attributes, model_attributes=[], path_attribute="path"):
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the new __init__()
             def wrapper2(self, *args, **kwargs):
@@ -105,12 +105,12 @@ def init():
                             param.requires_grad = True
                 
                 class WithObj(object):
-                    def __init__(*args, **kwargs):
+                    def __init__(self, *args, **kwargs):
                         pass
-                    def __enter__(_):
+                    def __enter__(self, *_):
                         self.freeze()
                         return self
-                    def __exit__(_, __, error, traceback):
+                    def __exit__(self, _, error, traceback):
                         self.unfreeze()
                         # normal cleanup HERE
                         if error is not None:
