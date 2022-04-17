@@ -105,12 +105,12 @@ def init():
                             param.requires_grad = True
                 
                 class WithObj(object):
-                    def __init__(self, *args, **kwargs):
+                    def __init__(self_, *args, **kwargs):
                         pass
-                    def __enter__(self, *_):
+                    def __enter__(self_, *_):
                         self.freeze()
                         return self
-                    def __exit__(self, _, error, traceback):
+                    def __exit__(self_, _, error, traceback):
                         self.unfreeze()
                         # normal cleanup HERE
                         if error is not None:
