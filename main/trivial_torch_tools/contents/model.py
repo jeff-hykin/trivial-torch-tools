@@ -2,16 +2,15 @@ import functools
 
 import torch
 import torch.nn as nn
-from simple_namespace import namespace
 
-from trivial_torch_tools.generics import product, bundle, large_pickle_save, large_pickle_load, apply_to_selected
+from .generics import product, bundle, large_pickle_save, large_pickle_load, apply_to_selected
 
 
-@namespace
-def init():
+class init:
+    @staticmethod
     def to_device(device=None, attribute="hardware", constructor_arg=True):
         if device is None:
-            from trivial_torch_tools.core import default_device
+            from .core import default_device
             device = default_device
         
         def wrapper1(function_being_wrapped):
@@ -36,6 +35,7 @@ def init():
         return wrapper1
     
                 
+    @staticmethod
     def forward_sequential_method(function_being_wrapped):
         # wrapper will be the new __init__()
         def wrapper(self, *args, **kwargs):
@@ -55,6 +55,7 @@ def init():
             return function_being_wrapped(self, *args, **kwargs)
         return wrapper
     
+    @staticmethod
     def save_and_load_methods(basic_attributes, model_attributes=[], path_attribute="path"):
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the new __init__()
@@ -89,6 +90,7 @@ def init():
             return wrapper2
         return wrapper1
     
+    @staticmethod
     def freeze_tools():
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the new __init__()
@@ -125,13 +127,11 @@ def init():
             return wrapper2
         return wrapper1
     
-    return locals()
 
-
-@namespace
-def convert_each_arg():
+class convert_each_arg:
+    @staticmethod
     def to_tensor(which_args=...):
-        from trivial_torch_tools.core import to_tensor as real_to_tensor
+        from .core import to_tensor as real_to_tensor
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
             def wrapper2(self, *args, **kwargs):
@@ -141,6 +141,7 @@ def convert_each_arg():
             return wrapper2
         return wrapper1
     
+    @staticmethod
     def to_device(device_attribute="hardware", device=None, which_args=...):
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
@@ -160,11 +161,12 @@ def convert_each_arg():
             return wrapper2
         return wrapper1
     
+    @staticmethod
     def to_batched_tensor(number_of_dimensions=4, which_args=...):
         """
             will wrap single-datapoint argument to make them appear as a batch
         """
-        from trivial_torch_tools.core import to_tensor as real_to_tensor
+        from .core import to_tensor as real_to_tensor
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
             def wrapper2(self, *args, **kwargs):
@@ -185,11 +187,12 @@ def convert_each_arg():
             return wrapper2
         return wrapper1
     
+    @staticmethod
     def torch_tensor_from_opencv_format(number_of_dimensions=4):
         """
             
         """
-        from trivial_torch_tools.image import torch_tensor_from_opencv_format as real_torch_tensor_from_opencv_format
+        from .image import torch_tensor_from_opencv_format as real_torch_tensor_from_opencv_format
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
             def wrapper2(self, *args, **kwargs):
@@ -198,5 +201,3 @@ def convert_each_arg():
                 return function_being_wrapped(self, *args, **kwargs)
             return wrapper2
         return wrapper1
-    
-    return locals()

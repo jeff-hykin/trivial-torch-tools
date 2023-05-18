@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from trivial_torch_tools.core import to_tensor
+from .core import to_tensor
 
 class OneHotifier():
     def __init__(self, possible_values):

@@ -1,0 +1,8 @@
+{
+    "pure_python_packages": {
+        "super_hash": {
+            "git_url": "git@github.com:jeff-hykin/super_hash.git",
+            "path": "__sources__/super_hash/main/super_hash"
+        }
+    }
+}

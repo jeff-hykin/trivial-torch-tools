@@ -1,9 +1,8 @@
 from collections import OrderedDict
-from simple_namespace import namespace
 
 import torch
 import torch.nn as nn
-from trivial_torch_tools.generics import is_like_generator, apply_to_selected
+from .generics import is_like_generator, apply_to_selected
 
 default_seed = 1
 torch.manual_seed(default_seed)
@@ -107,10 +106,8 @@ def to_tensor(an_object):
         
         return torch.stack(reshaped_list).type(torch.float)
 
-
-@namespace
-def args():
-    
+class args:
+    @staticmethod
     def to_device(device=default_device, which_args=...):
         def wrapper1(function_being_wrapped):
             # wrapper2 will be the replacement 
@@ -125,6 +122,3 @@ def args():
                 return function_being_wrapped(*args, **kwargs)
             return wrapper2
         return wrapper1
-    
-    
-    return locals()
