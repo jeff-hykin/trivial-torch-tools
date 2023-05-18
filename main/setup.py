@@ -35,7 +35,6 @@ setuptools.setup(
     },
     install_requires=[
         'torchvision >= 0.9.0',
-        'simple-namespace >= 1.0.0',
         'file-system-py >= 0.0.6',
     ],
     classifiers=[
