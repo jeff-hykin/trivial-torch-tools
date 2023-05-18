@@ -6,7 +6,7 @@ from .core import default_device, to_tensor, args
 from .misc import layer_output_shapes
 from .model import init, convert_each_arg
 from .one_hots import OneHotifier
-from ..contents import image
+from . import image
 
 class Sequential(nn.Sequential):
     @init.forward_sequential_method
