@@ -14,8 +14,9 @@ class Model(nn.Module):
     @init.to_device()
     # ^ does self.to() and defaults to GPU if available (uses default_device variable)
     @init.save_and_load_methods(model_attributes=["layers"], basic_attributes=["input_shape"])
-    # ^ creates self.save(path=self.path) and self.load(path=self.path)
+    # ^ creates self.save(path=self.path) and Model.load(path=some_path)
     def __init__(self):
+        super().__init__()
         self.input_shape = (81,81,3)
         layers = Sequential(input_shape=self.input_shape)
         # ^ dynamically compute the output shape/size of layers (the nn.Linear below)
