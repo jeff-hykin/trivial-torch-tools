@@ -15,6 +15,11 @@ try:
 except Exception as error:
     pass
 
+try:
+    import pandas
+except Exception as error:
+    pass
+
 def to_tensor(an_object):
     # if already a tensor, just return
     if isinstance(an_object, torch.Tensor):
@@ -22,6 +27,9 @@ def to_tensor(an_object):
     # if numpy, just convert
     if numpy and isinstance(an_object, numpy.ndarray):
         return torch.from_numpy(an_object).float()
+    # if pandas, just convert
+    if pandas and isinstance(an_object, pandas.DataFrame):
+        return torch.from_numpy(an_object.values).float()
     
     # if scalar, wrap it with a tensor
     if not is_like_generator(an_object):
